@@ -1,0 +1,10 @@
+button_field_clicked:
+  label: 'User clicks a button field'
+  category: 'Button field'
+  context_definitions:
+    field:
+      type: 'entity:field_config'
+      label: 'Field that was clicked'
+    entity:
+      type: 'entity'
+      label: 'Entity the field is on'

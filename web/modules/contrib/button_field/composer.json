@@ -1,0 +1,9 @@
+{
+    "name": "drupal/button_field",
+    "description": "Adds a button field type that triggers a rules event when clicked.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "drupal/rules": "^3"
+    }
+}

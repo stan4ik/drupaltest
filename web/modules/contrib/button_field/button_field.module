@@ -1,0 +1,25 @@
+<?php
+/**
+ * @file
+ * Defines a field, widget and formatter for the button field type.
+ */
+
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function button_field_views_data_alter(&$data) {
+  // Loops through fields definitions looking for button_field, and changes the
+  // handler to the button_field field handler.
+  foreach ($data as $table_name => &$table) {
+    foreach ($table as $id => &$field) {
+      if (!empty($field['field']['entity_type']) && !empty($field['field']['field_name'])) {
+        $field_storage = FieldStorageConfig::loadByName($field['field']['entity_type'], $field['field']['field_name']);
+        if ($field_storage && $field_storage->getType() === 'button_field') {
+          $field['field']['id'] = 'button_field';
+        }
+      }
+    }
+  }
+}

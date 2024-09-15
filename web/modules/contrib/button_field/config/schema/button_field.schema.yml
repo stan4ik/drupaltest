@@ -1,0 +1,82 @@
+field.value.button_field:
+  type: mapping
+  label: 'Default value (unused)'
+  sequence:
+    -
+      type: mapping
+      label: 'Default'
+      mapping:
+        value: string
+        label: 'Dummy value'
+
+field.storage_settings.button_field:
+  type: mapping
+  label: 'Button field settings'
+  mapping:
+    confirmation:
+      type: string
+      label: 'Confirmation'
+
+field.field_settings.button_field:
+  type: mapping
+  label: 'Button field settings'
+  mapping:
+    additional_classes:
+      type: string
+      label: 'Additional classes'
+
+field.widget.settings.button_field_html:
+  type: mapping
+  label: 'Button field HTML settings'
+  mapping:
+    text:
+      type: string
+      label: 'Button text'
+
+field.widget.settings.button_field_image:
+  type: mapping
+  label: 'Button field image settings'
+  mapping:
+    image_path:
+      type: string
+      label: 'Image path'
+    alt_text:
+      type: string
+      label: 'Alt text'
+    title_text:
+      type: string
+      label: 'Title text'
+
+field.formatter.settings.button_field_html:
+  type: mapping
+  label: 'Button field HTML settings'
+  mapping:
+    text:
+      type: string
+      label: 'Button text'
+
+field.formatter.settings.button_field_image:
+  type: mapping
+  label: 'Button field image settings'
+  mapping:
+    image_path:
+      type: string
+      label: 'Image path'
+    alt_text:
+      type: string
+      label: 'Alt text'
+    title_text:
+      type: string
+      label: 'Title text'
+
+condition.plugin.button_field_compare_button:
+  type: condition_plugin
+
+rules.condition.context_values.button_field_compare_button:
+  type: mapping
+  label: Button field compare context values
+  mapping:
+    clicked_field:
+      type: entity:field_config
+    comparison_field:
+      type: string

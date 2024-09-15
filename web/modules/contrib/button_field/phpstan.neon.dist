@@ -1,0 +1,27 @@
+# Copy this file to phpstan.neon when developing locally.
+# Sections in this file are commented out so that this can run on GitLab CI
+# because.
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+parameters:
+  level: 5
+  paths:
+    - .
+  excludePaths:
+    - config
+    - js
+    - coverage
+    - tests/fixtures
+  # Uncomment the below lines when copying this file as phpstan.neon, and adjust
+  # the bootstrap file location based on where this module was installed.
+  #bootstrapFiles:
+  #  - ../../../core/tests/bootstrap.php
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    # new static() is a best practice in Drupal, so we cannot fix that.
+    - "#^Unsafe usage of new static#"
+
+    # Ignore common errors for now.
+    - "#^Plugin definitions cannot be altered.#"
+    - "#^Missing cache backend declaration for performance.#"
+    - "#cache tag might be unclear and does not contain the cache key in it.#"

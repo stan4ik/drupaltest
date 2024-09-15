@@ -1,0 +1,52 @@
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - '/includes/include.drupalci.main.yml'
+      - '/includes/include.drupalci.variables.yml'
+      - '/includes/include.drupalci.workflows.yml'
+
+variables:
+  SKIP_STYLELINT: '1'
+
+nightwatch:
+  # Temporarily allow failure until stable.
+  allow_failure: true
+  # Run tests with `--tag=$CI_PROJECT_NAME`, otherwise we get a `The command .clickOperation() is already defined.` error.
+  script:
+    - !reference [ .setup_webserver ]
+    - !reference [ .simpletest_db ]
+    # Provide some context on the test run.
+    - vendor/bin/drush status
+    - export DRUPAL_TEST_DB_URL=$SIMPLETEST_DB
+    - cd $_WEB_ROOT
+    # @see https://git.drupalcode.org/project/drupal/-/commit/dfa16b8aca8e92be1f00a021c520a645f11f0227 — but tweaked to generate a correct JUnit report
+    - cp ./core/.env.example ./core/.env
+    # dotenv-safe/config does not support environment variables
+    # @see https://github.com/rolodato/dotenv-safe/issues/126
+    # @todo move this to `variables` when the above is resolved
+    - echo "DRUPAL_TEST_BASE_URL='http://localhost/$_WEB_ROOT'" >> ./core/.env
+    - echo "DRUPAL_TEST_CHROMEDRIVER_AUTOSTART=false" >> ./core/.env
+    - echo "DRUPAL_TEST_DB_URL='${DRUPAL_TEST_DB_URL}'" >> ./core/.env
+    - echo "DRUPAL_TEST_WEBDRIVER_HOSTNAME='localhost'" >> ./core/.env
+    - echo "DRUPAL_TEST_WEBDRIVER_CHROME_ARGS='--disable-dev-shm-usage --disable-gpu --headless'" >> ./core/.env
+    - echo "DRUPAL_TEST_WEBDRIVER_PORT='9515'" >> ./core/.env
+    - cat ./core/.env
+    - mkdir -p ./sites/simpletest ./sites/default/files /var/www/.cache/yarn /var/www/.yarn ./core/reports
+    - chown -R www-data:www-data ./sites/simpletest ./sites/default/files /var/www/.cache/yarn /var/www/.yarn ./core/reports ./core/.env
+    # @todo Uncomment this line and remove the line after it once https://www.drupal.org/project/drupal/issues/3389763 lands.
+    #- sudo BABEL_DISABLE_CACHE=1 DRUPAL_NIGHTWATCH_SEARCH_DIRECTORY=modules/custom/ -u www-data yarn --cwd ./core test:nightwatch
+    - sudo BABEL_DISABLE_CACHE=1 -u www-data yarn --cwd ./core test:nightwatch --tag=$CI_PROJECT_NAME
+  after_script:
+    - cp /var/log/apache2/test.apache.access.log $CI_PROJECT_DIR/apache.access.log.txt
+    - cp /var/log/apache2/test.apache.error.log $CI_PROJECT_DIR/apache.error.log.txt
+  artifacts:
+    expire_in: 6 mos
+    expose_as: 'reports'
+    when: always
+    reports:
+      junit: $_WEB_ROOT/core/reports/nightwatch/Tests/*.xml
+    paths:
+      - $_WEB_ROOT/core/reports/nightwatch
+      - $CI_PROJECT_DIR/apache.access.log.txt
+      - $CI_PROJECT_DIR/apache.error.log.txt

@@ -1,0 +1,10 @@
+/.idea/
+/.vs/
+/.vscode/
+
+.DS_Store
+Thumbs.db
+phpunit.xml
+phpstan.neon
+artifacts.zip
+tmp
